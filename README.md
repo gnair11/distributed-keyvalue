@@ -1,14 +1,33 @@
-# CS 134 KV Store
-Starter code for CS 134's assignments 2, 3, and 4.
+# Distributed KV
 
-## Overview of files
+**Distributed KV** is a distributed key-value storage system designed to explore the fundamentals of distributed systems, including replication, fault tolerance, consensus, and horizontal scaling.
 
-Assignment 2 uses primary/backup replication, assisted by a view service that decides which machines are alive. The view service allows the primary/backup service to work correctly in the presence of network partitions. The view service itself is not replicated, and is a single point of failure. You will need to edit the files in the `viewservice` and `pbservice` folders.
+The project will progressively implement primary-backup replication, Paxos-based consensus, and dynamic sharding to maintain consistency and availability across multiple servers.
 
-Assignment 3 uses the Paxos protocol to replicate the key/value database with no single point of failure, and handles network partitions correctly. This key/value service is slower than a non-replicated key/value server would be, but is fault tolerant. You will need to edit the files in the `paxos` and `kvpaxos` folder.
+**Goal:** Develop a deep understanding of distributed systems by implementing core protocols from scratch, handling real-world failure scenarios, and exploring the architectural tradeoffs behind scalable, reliable infrastructure.
 
-Assignment 4 is a sharded key/value database, where each shard replicates its state using Paxos. This key/value service can perform Put/Get operations in parallel on different shards, allowing it to support applications such as MapReduce that can put a high load on a storage system. Assignment 4 also has a replicated configuration service, which tells the shards what key range they are responsible for. It can change the assignment of keys to shards, for example, in response to changing load. Assignment 4 has the core of a real-world design for thousands of servers. You will be reusing the code you wrote for paxos in the `paxos` folder from assignment 3, and adding code in the `shardmaster` and `shardkv` folders.
+## What I am building
 
-## Using this repository
+### 1. Primary-backup replication
 
-You should have been added to this GitHub repository alongside your teammate, if any. Edit the code in whatever manner is easiest for you, and when ready to submit, in Gradescope, select the "Submit from GitHub" option, link your GitHub account, and then submit your repository.
+Build a replicated key-value service with a primary server and a backup. A view service will track server liveness and coordinate role changes so the system can recover from server failures while preserving consistent state.
+
+This stage explores failover, state synchronization, and network partitions, including the limitations of a view service that is itself a single point of failure.
+
+**Components:** `viewservice/`, `pbservice/`
+
+### 2. Paxos-based consensus
+
+Implement Paxos from scratch and use it to agree on a shared sequence of key-value operations across replicas. This stage will remove the central view service and explore how a replicated service maintains consistency through failures and network partitions.
+
+Progress will depend on a reachable majority of replicas, making the tradeoff between consistency and availability explicit.
+
+**Components:** `paxos/`, `kvpaxos/`
+
+### 3. Dynamic sharding
+
+Partition the key space across replica groups, with each group using Paxos to replicate its state. Different groups will serve Get and Put operations in parallel, allowing the system to scale horizontally.
+
+A replicated configuration service will manage shard ownership as groups join or leave. This stage will explore shard migration, reconfiguration, and preserving consistency while data moves between groups.
+
+**Components:** `shardmaster/`, `shardkv/`, with consensus provided by `paxos/`

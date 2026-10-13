@@ -3,7 +3,3 @@ main/pbc
 main/pbd
 main/viewd
 *.txt
-!/ai-usage.txt
-!/ai-usage-2.txt
-!/ai-usage-3.txt
-!/ai-usage-4.txt
